@@ -42,7 +42,7 @@ public static class DependencyInjection
         services.AddScoped<IMessagePublisher, RabbitMqMessagePublisher>();
         
         // Elasticsearch Services
-        services.AddScoped<IElasticsearchService, ElasticsearchService>();
+        services.AddSingleton<IElasticsearchService, ElasticsearchService>();
         
         // Background Services (Consumers)
         services.AddHostedService<Services.Consumers.NotificationConsumer>();
