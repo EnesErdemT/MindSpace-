@@ -1,0 +1,2 @@
+Front projesini npm run dev
+backend cd blog.api dotnet run

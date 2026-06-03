@@ -1,0 +1,85 @@
+@startuml Clean Architecture Layers
+skinparam packageStyle rectangle
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+
+title MindSpace - Clean Architecture Katmanları
+
+package "Presentation Layer\n(Blog.API - Controllers)" #4A90E2 {
+  component "REST API Endpoints" as api
+  component "JWT Authentication" as jwt
+  component "Global Exception Handling" as exception
+  component "CORS Configuration" as cors
+  component "Rate Limiting" as rate
+  component "Swagger/OpenAPI" as swagger
+}
+
+package "Application Layer\n(Blog.Application - Use Cases)" #7ED321 {
+  component "Business Logic" as business
+  component "DTOs (Data Transfer Objects)" as dto
+  component "Interfaces (IRepository, IService)" as interfaces
+  component "Validation Rules" as validation
+  component "Mapping Profiles (AutoMapper)" as mapper
+}
+
+package "Infrastructure Layer\n(Blog.Infrastructure - Implementation)" #F5A623 {
+  component "Database Context (EF Core)" as dbcontext
+  component "Repository Pattern Implementation" as repo
+  component "External Services\n(Email, Elasticsearch, RabbitMQ)" as external
+  component "SignalR Hubs" as signalr
+  component "JWT Token Service" as tokenservice
+  component "Message Consumers" as consumers
+}
+
+package "Domain Layer\n(Blog.Domain - Core Business)" #D0021B {
+  component "Entities\n(User, Post, Comment, etc.)" as entities
+  component "Enums\n(PostStatus, NotificationType, etc.)" as enums
+  component "Domain Events" as events
+  component "Business Rules" as rules
+  component "Value Objects" as valueobjects
+}
+
+' Dependencies (top to bottom)
+api -down-> business : "uses"
+jwt -down-> business
+exception -down-> business
+
+business -down-> interfaces : "depends on"
+dto -down-> interfaces
+validation -down-> interfaces
+
+repo -up-> interfaces : "implements"
+dbcontext -up-> interfaces
+external -up-> interfaces
+
+repo -down-> entities : "uses"
+dbcontext -down-> entities
+business -down-> entities
+
+note right of "Presentation Layer\n(Blog.API - Controllers)"
+  Dış dünya ile etkileşim noktası
+  HTTP isteklerini karşılar
+  Response döner
+end note
+
+note right of "Application Layer\n(Blog.Application - Use Cases)"
+  İş mantığını orkestre eder
+  Use case'leri içerir
+  Framework bağımsız
+end note
+
+note right of "Infrastructure Layer\n(Blog.Infrastructure - Implementation)"
+  Dış sistemlerle entegrasyon
+  Interface implementasyonları
+  Veritabanı, mesajlaşma, arama
+end note
+
+note right of "Domain Layer\n(Blog.Domain - Core Business)"
+  Sistemin kalbi
+  Hiçbir dış bağımlılık yok
+  Saf iş mantığı
+end note
+
+@enduml

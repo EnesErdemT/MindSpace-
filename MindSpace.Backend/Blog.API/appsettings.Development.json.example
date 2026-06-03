@@ -1,0 +1,23 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Port=5432;Database=MediumCloneDB;Username=postgres;Password=YOUR_PASSWORD"
+  },
+  "JwtSettings": {
+    "SecretKey": "YourSuperSecretKeyAtLeast32CharactersLong!!"
+  },
+  "EmailSettings": {
+    "SmtpHost": "smtp.gmail.com",
+    "SmtpPort": 587,
+    "SmtpUsername": "your_gmail@gmail.com",
+    "SmtpPassword": "your_gmail_app_password",
+    "FromEmail": "your_gmail@gmail.com",
+    "FromName": "MindSpace",
+    "AppUrl": "http://localhost:3000"
+  }
+}
