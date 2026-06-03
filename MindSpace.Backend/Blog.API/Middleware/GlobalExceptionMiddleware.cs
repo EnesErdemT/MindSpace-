@@ -37,7 +37,7 @@ public class GlobalExceptionMiddleware
         var response = new
         {
             status = 500,
-            error = "Sunucu hatası oluştu.",
+            error = "A apărut o eroare de server.",
             // Sadece development'ta detay göster
             detail = _env.IsDevelopment() ? exception.Message : null
         };

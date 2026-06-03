@@ -1,4 +1,4 @@
-﻿using Blog.Application.Common.Interfaces;
+using Blog.Application.Common.Interfaces;
 using Blog.Application.Features.Notifications.Interfaces;
 using Blog.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -69,7 +69,7 @@ public class UsersController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting users list");
-            return StatusCode(500, new { Error = "KullanÄ±cÄ±lar getirilirken hata oluÅŸtu" });
+            return StatusCode(500, new { Error = "A apărut o eroare la preluarea utilizatorilor" });
         }
     }
 
@@ -82,7 +82,7 @@ public class UsersController : ControllerBase
         {
             var user = await _unitOfWork.Users.GetByUserNameAsync(userName);
             if (user == null)
-                return NotFound("KullanÄ±cÄ± bulunamadÄ±");
+                return NotFound("Utilizatorul nu a fost găsit");
 
             var recentPosts = await _unitOfWork.Posts.FindAsync(p => 
                 p.AuthorId == user.Id && p.Status == PostStatus.Published);
@@ -132,7 +132,7 @@ public class UsersController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting user profile for {UserName}", userName);
-            return StatusCode(500, new { Error = "KullanÄ±cÄ± profili getirilirken hata oluÅŸtu" });
+            return StatusCode(500, new { Error = "A apărut o eroare la preluarea profilului de utilizator" });
         }
     }
 
@@ -151,7 +151,7 @@ public class UsersController : ControllerBase
 
             var userToFollow = await _unitOfWork.Users.GetByUserNameAsync(userName);
             if (userToFollow == null)
-                return NotFound("KullanÄ±cÄ± bulunamadÄ±");
+                return NotFound("Utilizatorul nu a fost găsit");
 
             // Kendini takip etmeye Ã§alÄ±ÅŸÄ±yorsa hata ver
             if (currentUserId == userToFollow.Id)
@@ -169,7 +169,7 @@ public class UsersController : ControllerBase
                     currentUserId, userToFollow.Id);
 
                 return Ok(new { 
-                    Message = "Takip bÄ±rakÄ±ldÄ±",
+                    Message = "Abonarea a fost anulată",
                     IsFollowing = false
                 });
             }
@@ -186,7 +186,7 @@ public class UsersController : ControllerBase
                     currentUserId, userToFollow.Id);
 
                 return Ok(new { 
-                    Message = "KullanÄ±cÄ± takip edildi",
+                    Message = "Utilizatorul este acum urmărit",
                     IsFollowing = true
                 });
             }
@@ -194,7 +194,7 @@ public class UsersController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error toggling follow for user {UserName}", userName);
-            return StatusCode(500, new { Error = "Takip iÅŸlemi sÄ±rasÄ±nda hata oluÅŸtu" });
+            return StatusCode(500, new { Error = "A apărut o eroare în timpul procesului de urmărire" });
         }
     }
     [HttpGet("{userName}/followers")]
@@ -206,7 +206,7 @@ public class UsersController : ControllerBase
         {
             var user = await _unitOfWork.Users.GetByUserNameAsync(userName);
             if (user == null)
-                return NotFound("KullanÄ±cÄ± bulunamadÄ±");
+                return NotFound("Utilizatorul nu a fost găsit");
 
             var followers = await _unitOfWork.Users.GetFollowersAsync(user.Id);
             var totalCount = followers.Count();
@@ -240,7 +240,7 @@ public class UsersController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting followers for user {UserName}", userName);
-            return StatusCode(500, new { Error = "TakipÃ§iler getirilirken hata oluÅŸtu" });
+            return StatusCode(500, new { Error = "A apărut o eroare la preluarea urmăritorilor" });
         }
     }
 
@@ -253,7 +253,7 @@ public class UsersController : ControllerBase
         {
             var user = await _unitOfWork.Users.GetByUserNameAsync(userName);
             if (user == null)
-                return NotFound("KullanÄ±cÄ± bulunamadÄ±");
+                return NotFound("Utilizatorul nu a fost găsit");
 
             var following = await _unitOfWork.Users.GetFollowingAsync(user.Id);
             var totalCount = following.Count();
@@ -287,7 +287,7 @@ public class UsersController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting following for user {UserName}", userName);
-            return StatusCode(500, new { Error = "Takip edilenler getirilirken hata oluÅŸtu" });
+            return StatusCode(500, new { Error = "A apărut o eroare la preluarea persoanelor urmărite" });
         }
     }
     [HttpGet("{userName}/posts")]
@@ -299,7 +299,7 @@ public class UsersController : ControllerBase
         {
             var user = await _unitOfWork.Users.GetByUserNameAsync(userName);
             if (user == null)
-                return NotFound("KullanÄ±cÄ± bulunamadÄ±");
+                return NotFound("Utilizatorul nu a fost găsit");
 
             var posts = await _unitOfWork.Posts.FindAsync(p => 
                 p.AuthorId == user.Id && p.Status == PostStatus.Published);
@@ -348,7 +348,7 @@ public class UsersController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting posts for user {UserName}", userName);
-            return StatusCode(500, new { Error = "Postlar getirilirken hata oluÅŸtu" });
+            return StatusCode(500, new { Error = "A apărut o eroare la preluarea articolelor" });
         }
     }
 
@@ -371,7 +371,7 @@ public class UsersController : ControllerBase
 
             var user = await _unitOfWork.Users.GetByIdAsync(userId);
             if (user == null)
-                return NotFound("KullanÄ±cÄ± bulunamadÄ±");
+                return NotFound("Utilizatorul nu a fost găsit");
 
             user.FirstName = request.FirstName ?? user.FirstName;
             user.LastName = request.LastName ?? user.LastName;
@@ -403,7 +403,7 @@ public class UsersController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating profile for user {UserId}", GetCurrentUserId());
-            return StatusCode(500, new { Error = "Profil gÃ¼ncellenirken hata oluÅŸtu" });
+            return StatusCode(500, new { Error = "A apărut o eroare la actualizarea profilului" });
         }
     }
 

@@ -1,4 +1,4 @@
-﻿using Blog.Application.Features.Notifications.Interfaces;
+using Blog.Application.Features.Notifications.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -62,7 +62,7 @@ public class NotificationsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting notifications for user");
-            return StatusCode(500, new { Message = "Bildirimler alınırken hata oluştu" });
+            return StatusCode(500, new { Message = "A apărut o eroare la preluarea notificărilor" });
         }
     }
 
@@ -83,7 +83,7 @@ public class NotificationsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting unread count for user");
-            return StatusCode(500, new { Message = "Okunmamış bildirim sayısı alınırken hata oluştu" });
+            return StatusCode(500, new { Message = "A apărut o eroare la preluarea numărului de notificări necitite" });
         }
     }
     [HttpPut("{id}/mark-read")]
@@ -99,12 +99,12 @@ public class NotificationsController : ControllerBase
                 return Unauthorized();
 
             await _notificationService.MarkAsReadAsync(id, userId);
-            return Ok(new { Message = "Bildirim okundu olarak işaretlendi" });
+            return Ok(new { Message = "Notificarea a fost marcată ca citită" });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error marking notification {NotificationId} as read", id);
-            return StatusCode(500, new { Message = "Bildirim güncellenirken hata oluştu" });
+            return StatusCode(500, new { Message = "A apărut o eroare la actualizarea notificării" });
         }
     }
 
@@ -125,7 +125,7 @@ public class NotificationsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error marking all notifications as read for user");
-            return StatusCode(500, new { Message = "Bildirimler güncellenirken hata oluştu" });
+            return StatusCode(500, new { Message = "A apărut o eroare la actualizarea notificărilor" });
         }
     }
 
@@ -145,12 +145,12 @@ public class NotificationsController : ControllerBase
             if (!success)
                 return NotFound(new { Message = "Notificare negăsită" });
 
-            return Ok(new { Message = "Bildirim silindi" });
+            return Ok(new { Message = "Notificarea a fost ștearsă" });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error deleting notification {NotificationId}", id);
-            return StatusCode(500, new { Message = "Bildirim silinirken hata oluştu" });
+            return StatusCode(500, new { Message = "A apărut o eroare la ștergerea notificării" });
         }
     }
 
@@ -167,21 +167,21 @@ public class NotificationsController : ControllerBase
 
             var notification = await _notificationService.CreateNotificationAsync(
                 userId: userId,
-                title: "Test Bildirimi",
-                message: "Bu bir test bildirimidir. SignalR real-time çalışıyor! 🎉",
+                title: "Notificare de Test",
+                message: "Aceasta este o notificare de test. SignalR funcționează în timp real! 🎉",
                 type: Domain.Entities.NotificationType.NewComment,
                 actionUrl: "/test"
             );
 
             return Ok(new { 
-                Message = "Test bildirimi oluşturuldu ve real-time gönderildi!",
+                Message = "Notificarea de test a fost creată și trimisă în timp real!",
                 NotificationId = notification.Id 
             });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating test notification");
-            return StatusCode(500, new { Message = "Test bildirimi oluşturulurken hata oluştu" });
+            return StatusCode(500, new { Message = "A apărut o eroare la crearea notificării de test" });
         }
     }
 

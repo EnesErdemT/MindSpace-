@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -30,13 +30,13 @@ public class FileUploadController : ControllerBase
         {
             if (file == null || file.Length == 0)
             {
-                return BadRequest(new { Message = "Dosya seçilmedi" });
+                return BadRequest(new { Message = "Niciun fișier nu a fost selectat" });
             }
 
             // Dosya boyutu kontrolü (5MB)
             if (file.Length > 5 * 1024 * 1024)
             {
-                return BadRequest(new { Message = "Dosya boyutu 5MB'dan büyük olamaz" });
+                return BadRequest(new { Message = "Dimensiunea fișierului nu poate depăși 5MB" });
             }
 
             // Dosya tipi kontrolü
@@ -45,7 +45,7 @@ public class FileUploadController : ControllerBase
             
             if (!allowedExtensions.Contains(fileExtension))
             {
-                return BadRequest(new { Message = "Sadece resim dosyaları yüklenebilir (jpg, jpeg, png, gif, webp)" });
+                return BadRequest(new { Message = "Pot fi încărcate doar imagini (jpg, jpeg, png, gif, webp)" });
             }
 
             // Uploads klasörünü oluştur

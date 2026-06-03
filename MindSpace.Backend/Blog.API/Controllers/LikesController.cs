@@ -1,4 +1,4 @@
-﻿using Blog.Application.Common.Interfaces;
+using Blog.Application.Common.Interfaces;
 using Blog.Application.Features.Notifications.Interfaces;
 using Blog.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -40,7 +40,7 @@ public class LikesController : ControllerBase
 
             var post = await _unitOfWork.Posts.GetByIdAsync(postId);
             if (post == null)
-                return NotFound("Post bulunamadı");
+                return NotFound("Articolul nu a fost găsit");
 
             var existingLike = await _unitOfWork.Likes.FindAsync(l => 
                 l.UserId == userId && l.PostId == postId);
@@ -85,7 +85,7 @@ public class LikesController : ControllerBase
                 _logger.LogInformation("Post liked: {PostId} by {UserId}", postId, userId);
                 
                 return Ok(new { 
-                    Message = "Post beğenildi",
+                    Message = "Articolul a fost apreciat",
                     IsLiked = true,
                     LikeCount = post.LikeCount + 1
                 });
@@ -94,7 +94,7 @@ public class LikesController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error toggling post like for post {PostId}", postId);
-            return StatusCode(500, new { Error = "Beğeni işlemi sırasında hata oluştu" });
+            return StatusCode(500, new { Error = "A apărut o eroare în timpul procesului de apreciere" });
         }
     }
 
@@ -154,7 +154,7 @@ public class LikesController : ControllerBase
                 _logger.LogInformation("Comment liked: {CommentId} by {UserId}", commentId, userId);
                 
                 return Ok(new { 
-                    Message = "Yorum beğenildi",
+                    Message = "Comentariul a fost apreciat",
                     IsLiked = true,
                     LikeCount = comment.LikeCount
                 });
@@ -163,7 +163,7 @@ public class LikesController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error toggling comment like for comment {CommentId}", commentId);
-            return StatusCode(500, new { Error = "Beğeni işlemi sırasında hata oluştu" });
+            return StatusCode(500, new { Error = "A apărut o eroare în timpul procesului de apreciere" });
         }
     }
 
@@ -186,7 +186,7 @@ public class LikesController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting post like status for post {PostId}", postId);
-            return StatusCode(500, new { Error = "Beğeni durumu kontrol edilirken hata oluştu" });
+            return StatusCode(500, new { Error = "A apărut o eroare la verificarea stării de apreciere" });
         }
     }
 
@@ -209,7 +209,7 @@ public class LikesController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting comment like status for comment {CommentId}", commentId);
-            return StatusCode(500, new { Error = "Beğeni durumu kontrol edilirken hata oluştu" });
+            return StatusCode(500, new { Error = "A apărut o eroare la verificarea stării de apreciere" });
         }
     }
 

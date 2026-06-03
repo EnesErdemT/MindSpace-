@@ -159,7 +159,7 @@ export default function Home() {
                           Recomandat
                         </span>
                         <span className="text-gray-500 text-sm">
-                          {new Date(featuredPost.createdAt).toLocaleDateString('tr-TR')}
+                          {new Date(featuredPost.createdAt).toLocaleDateString('ro-RO')}
                         </span>
                       </div>
                       

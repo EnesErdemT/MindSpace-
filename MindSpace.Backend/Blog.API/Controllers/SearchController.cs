@@ -1,4 +1,4 @@
-﻿using Blog.Application.Common.Interfaces;
+using Blog.Application.Common.Interfaces;
 using Blog.Application.Common.Search;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -48,7 +48,7 @@ public class SearchController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error searching posts");
-            return StatusCode(500, new { Message = "Arama sırasında hata oluştu" });
+            return StatusCode(500, new { Message = "A apărut o eroare în timpul căutării" });
         }
     }
 
@@ -90,7 +90,7 @@ public class SearchController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in quick search");
-            return StatusCode(500, new { Message = "Hızlı arama sırasında hata oluştu" });
+            return StatusCode(500, new { Message = "A apărut o eroare în timpul căutării rapide" });
         }
     }
 
@@ -132,7 +132,7 @@ public class SearchController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting similar posts for {PostId}", postId);
-            return StatusCode(500, new { Message = "Benzer yazılar alınırken hata oluştu" });
+            return StatusCode(500, new { Message = "A apărut o eroare la preluarea articolelor similare" });
         }
     }
 
@@ -148,7 +148,7 @@ public class SearchController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting popular searches");
-            return StatusCode(500, new { Message = "Popüler aramalar alınırken hata oluştu" });
+            return StatusCode(500, new { Message = "A apărut o eroare la preluarea căutărilor populare" });
         }
     }
 
@@ -179,7 +179,7 @@ public class SearchController : ControllerBase
             { 
                 IsHealthy = false,
                 Status = "error",
-                Message = "Search sağlık kontrolü başarısız",
+                Message = "Verificarea stării motorului de căutare a eșuat",
                 Timestamp = DateTime.UtcNow
             });
         }
@@ -206,7 +206,7 @@ public class SearchController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error re-indexing posts");
-            return StatusCode(500, new { Message = "Re-indexing sırasında hata oluştu" });
+            return StatusCode(500, new { Message = "A apărut o eroare în timpul reindexării" });
         }
     }
 
@@ -232,7 +232,7 @@ public class SearchController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error adding test data");
-            return StatusCode(500, new { Message = "Test verileri eklenirken hata oluştu" });
+            return StatusCode(500, new { Message = "A apărut o eroare la adăugarea datelor de test" });
         }
     }
 
@@ -240,9 +240,9 @@ public class SearchController : ControllerBase
 
     private List<PostSearchDocument> GenerateTestSearchData()
     {
-        var categories = new[] { "Teknoloji", "Yazılım", "AI", "Web Development", "Mobile" };
+        var categories = new[] { "Tehnologie", "Dezvoltare Software", "AI", "Web Development", "Mobile" };
         var tags = new[] { "react", "javascript", "typescript", "csharp", "dotnet", "api", "frontend", "backend" };
-        var authors = new[] { "John Doe", "Jane Smith", "Ahmet Yılmaz", "Ayşe Demir", "Mehmet Kaya" };
+        var authors = new[] { "John Doe", "Jane Smith", "Andrei Popescu", "Elena Ionescu", "Mihai Radu" };
 
         var testPosts = new List<PostSearchDocument>();
 
@@ -255,11 +255,11 @@ public class SearchController : ControllerBase
             testPosts.Add(new PostSearchDocument
             {
                 Id = Guid.NewGuid(),
-                Title = $"Test Post #{i}: {category} ile İlgili Rehber",
-                Content = $"Bu bir test yazısıdır. {category} hakkında detaylı bilgiler içerir. " +
+                Title = $"Articol de Test #{i}: Ghid despre {category}",
+                Content = $"Acesta este un articol de test. Conține informații detaliate despre {category}. " +
                          $"Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
-                         $"Bu yazı {string.Join(", ", postTags)} konularını kapsar.",
-                Excerpt = $"{category} hakkında özet bilgiler ve ipuçları",
+                         $"Acest articol acoperă subiectele {string.Join(", ", postTags)}.",
+                Excerpt = $"Rezumat și sfaturi utile despre {category}",
                 Slug = $"test-post-{i}-{category.ToLowerInvariant().Replace(" ", "-")}",
                 AuthorId = Guid.NewGuid().ToString(),
                 AuthorName = author,
@@ -275,7 +275,7 @@ public class SearchController : ControllerBase
                 CommentCount = Random.Shared.Next(0, 20),
                 ReadTimeMinutes = Random.Shared.Next(2, 15),
                 Status = "Published",
-                MetaDescription = $"{category} hakkında kapsamlı rehber",
+                MetaDescription = $"Ghid detaliat despre {category}",
                 MetaKeywords = string.Join(", ", postTags),
                 FeaturedImageUrl = $"https://picsum.photos/800/400?random={i}"
             });

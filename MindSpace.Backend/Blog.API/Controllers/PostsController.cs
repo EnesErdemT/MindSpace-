@@ -1,4 +1,4 @@
-﻿using Blog.Application.Features.Posts.DTOs;
+using Blog.Application.Features.Posts.DTOs;
 using Blog.Application.Features.Posts.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +40,7 @@ public class PostsController : ControllerBase
             var userId = GetCurrentUserId();
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized("KullanÄ±cÄ± kimliÄŸi bulunamadÄ±");
+                return Unauthorized("Identificatorul utilizatorului nu a fost găsit");
             }
 
             var post = await _postService.CreatePostAsync(request, userId);
@@ -52,7 +52,7 @@ public class PostsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating post");
-            return StatusCode(500, new { Error = "Post oluÅŸturulurken hata oluÅŸtu" });
+            return StatusCode(500, new { Error = "A apărut o eroare la crearea articolului" });
         }
     }
 
@@ -75,12 +75,12 @@ public class PostsController : ControllerBase
             var userId = GetCurrentUserId();
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized("KullanÄ±cÄ± kimliÄŸi bulunamadÄ±");
+                return Unauthorized("Identificatorul utilizatorului nu a fost găsit");
             }
             var existingPost = await _postService.GetPostByIdAsync(id);
             if (existingPost == null)
             {
-                return NotFound("Post bulunamadÄ±");
+                return NotFound("Articolul nu a fost găsit");
             }
 
             var userRoles = GetCurrentUserRoles();
@@ -89,7 +89,7 @@ public class PostsController : ControllerBase
 
             if (!isAdmin && !isOwner)
             {
-                return Forbid("Sadece post sahibi veya admin bu iÅŸlemi yapabilir");
+                return Forbid("Doar autorul articolului sau administratorul poate efectua această acțiune");
             }
 
             var updatedPost = await _postService.UpdatePostAsync(id, request);
@@ -101,7 +101,7 @@ public class PostsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating post {PostId}", id);
-            return StatusCode(500, new { Error = "Post gÃ¼ncellenirken hata oluÅŸtu" });
+            return StatusCode(500, new { Error = "A apărut o eroare la actualizarea articolului" });
         }
     }
 
@@ -118,12 +118,12 @@ public class PostsController : ControllerBase
             var userId = GetCurrentUserId();
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized("KullanÄ±cÄ± kimliÄŸi bulunamadÄ±");
+                return Unauthorized("Identificatorul utilizatorului nu a fost găsit");
             }
             var existingPost = await _postService.GetPostByIdAsync(id);
             if (existingPost == null)
             {
-                return NotFound("Post bulunamadÄ±");
+                return NotFound("Articolul nu a fost găsit");
             }
 
             var userRoles = GetCurrentUserRoles();
@@ -132,7 +132,7 @@ public class PostsController : ControllerBase
 
             if (!isAdmin && !isOwner)
             {
-                return Forbid("Sadece post sahibi veya admin bu iÅŸlemi yapabilir");
+                return Forbid("Doar autorul articolului sau administratorul poate efectua această acțiune");
             }
 
             await _postService.DeletePostAsync(id);
@@ -144,7 +144,7 @@ public class PostsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error deleting post {PostId}", id);
-            return StatusCode(500, new { Error = "Post silinirken hata oluÅŸtu" });
+            return StatusCode(500, new { Error = "A apărut o eroare la ștergerea articolului" });
         }
     }
     [HttpGet("{id:guid}")]
@@ -158,15 +158,15 @@ public class PostsController : ControllerBase
             
             if (post == null)
             {
-                return NotFound("Post bulunamadÄ±");
+                return NotFound("Articolul nu a fost găsit");
             }
 
             return Ok(post);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Post getirme hatasÄ± - PostId: {PostId}", id);
-            return StatusCode(500, "Post getirilirken bir hata oluÅŸtu");
+            _logger.LogError(ex, "Eroare la preluarea articolului - PostId: {PostId}", id);
+            return StatusCode(500, "A apărut o eroare la preluarea articolului");
         }
     }
 
@@ -181,15 +181,15 @@ public class PostsController : ControllerBase
             
             if (post == null)
             {
-                return NotFound("Post bulunamadÄ±");
+                return NotFound("Articolul nu a fost găsit");
             }
 
             return Ok(post);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Post getirme hatasÄ± - Slug: {Slug}", slug);
-            return StatusCode(500, "Post getirilirken bir hata oluÅŸtu");
+            _logger.LogError(ex, "Eroare la preluarea articolului - Slug: {Slug}", slug);
+            return StatusCode(500, "A apărut o eroare la preluarea articolului");
         }
     }
 
@@ -208,8 +208,8 @@ public class PostsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Post listesi getirme hatasÄ±");
-            return StatusCode(500, "Post listesi getirilirken bir hata oluÅŸtu");
+            _logger.LogError(ex, "Eroare la preluarea listei de articole");
+            return StatusCode(500, "A apărut o eroare la preluarea listei de articole");
         }
     }
 
@@ -224,7 +224,7 @@ public class PostsController : ControllerBase
             var userId = GetCurrentUserId();
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized("KullanÄ±cÄ± kimliÄŸi bulunamadÄ±");
+                return Unauthorized("Identificatorul utilizatorului nu a fost găsit");
             }
 
             if (page < 1) page = 1;
@@ -236,8 +236,8 @@ public class PostsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Eroare la obÈ›inerea postÄƒrilor utilizatorului");
-            return StatusCode(500, "A apÄƒrut o eroare la obÈ›inerea postÄƒrilor");
+            _logger.LogError(ex, "Eroare la obținerea postărilor utilizatorului");
+            return StatusCode(500, "A apărut o eroare la obținerea articolelor");
         }
     }
 
@@ -256,8 +256,8 @@ public class PostsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Kategori postlarÄ± getirme hatasÄ± - CategoryId: {CategoryId}", categoryId);
-            return StatusCode(500, "Kategori postlarÄ± getirilirken bir hata oluÅŸtu");
+            _logger.LogError(ex, "Eroare la preluarea articolelor din categorie - CategoryId: {CategoryId}", categoryId);
+            return StatusCode(500, "A apărut o eroare la preluarea articolelor din categorie");
         }
     }
 
@@ -276,8 +276,8 @@ public class PostsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Kategori postlarÄ± getirme hatasÄ± - CategorySlug: {CategorySlug}", categorySlug);
-            return StatusCode(500, "Kategori postlarÄ± getirilirken bir hata oluÅŸtu");
+            _logger.LogError(ex, "Eroare la preluarea articolelor din categorie - CategorySlug: {CategorySlug}", categorySlug);
+            return StatusCode(500, "A apărut o eroare la preluarea articolelor din categorie");
         }
     }
 
@@ -296,8 +296,8 @@ public class PostsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Tag postlarÄ± getirme hatasÄ± - TagSlug: {TagSlug}", tagSlug);
-            return StatusCode(500, "Tag postlarÄ± getirilirken bir hata oluÅŸtu");
+            _logger.LogError(ex, "Eroare la preluarea articolelor cu eticheta - TagSlug: {TagSlug}", tagSlug);
+            return StatusCode(500, "A apărut o eroare la preluarea articolelor cu eticheta");
         }
     }
 
@@ -309,7 +309,7 @@ public class PostsController : ControllerBase
         {
             if (string.IsNullOrWhiteSpace(query))
             {
-                return BadRequest("Arama terimi boÅŸ olamaz");
+                return BadRequest("Termenul de căutare nu poate fi gol");
             }
 
             if (page < 1) page = 1;
@@ -321,8 +321,8 @@ public class PostsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Post arama hatasÄ± - Query: {Query}", query);
-            return StatusCode(500, "Arama yapÄ±lÄ±rken bir hata oluÅŸtu");
+            _logger.LogError(ex, "Eroare la căutarea articolelor - Query: {Query}", query);
+            return StatusCode(500, "A apărut o eroare la efectuarea căutării");
         }
     }
 
@@ -339,13 +339,13 @@ public class PostsController : ControllerBase
             var userId = GetCurrentUserId();
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized("KullanÄ±cÄ± kimliÄŸi bulunamadÄ±");
+                return Unauthorized("Identificatorul utilizatorului nu a fost găsit");
             }
 
             var existingPost = await _postService.GetPostByIdAsync(id);
             if (existingPost == null)
             {
-                return NotFound("Post bulunamadÄ±");
+                return NotFound("Articolul nu a fost găsit");
             }
 
             var userRoles = GetCurrentUserRoles();
@@ -354,7 +354,7 @@ public class PostsController : ControllerBase
 
             if (!isAdmin && !isOwner)
             {
-                return Forbid("Sadece post sahibi veya admin bu iÅŸlemi yapabilir");
+                return Forbid("Doar autorul articolului sau administratorul poate efectua această acțiune");
             }
 
             var publishedPost = await _postService.PublishPostAsync(id);
@@ -366,7 +366,7 @@ public class PostsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error publishing post {PostId}", id);
-            return StatusCode(500, new { Error = "Post yayÄ±nlanÄ±rken hata oluÅŸtu" });
+            return StatusCode(500, new { Error = "A apărut o eroare la publicarea articolului" });
         }
     }
 
@@ -383,13 +383,13 @@ public class PostsController : ControllerBase
             var userId = GetCurrentUserId();
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized("KullanÄ±cÄ± kimliÄŸi bulunamadÄ±");
+                return Unauthorized("Identificatorul utilizatorului nu a fost găsit");
             }
 
             var existingPost = await _postService.GetPostByIdAsync(id);
             if (existingPost == null)
             {
-                return NotFound("Post bulunamadÄ±");
+                return NotFound("Articolul nu a fost găsit");
             }
 
             var userRoles = GetCurrentUserRoles();
@@ -398,7 +398,7 @@ public class PostsController : ControllerBase
 
             if (!isAdmin && !isOwner)
             {
-                return Forbid("Sadece post sahibi veya admin bu iÅŸlemi yapabilir");
+                return Forbid("Doar autorul articolului sau administratorul poate efectua această acțiune");
             }
 
             var unpublishedPost = await _postService.UnpublishPostAsync(id);
@@ -410,14 +410,14 @@ public class PostsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error unpublishing post {PostId}", id);
-            return StatusCode(500, new { Error = "Post yayÄ±ndan kaldÄ±rÄ±lÄ±rken hata oluÅŸtu" });
+            return StatusCode(500, new { Error = "A apărut o eroare la retragerea articolului" });
         }
     }
 
     #region Helper Methods
 
     /// <summary>
-    /// JWT token'dan user ID'yi al
+    /// Preluarea ID-ului utilizatorului din tokenul JWT
     /// </summary>
     private string? GetCurrentUserId()
     {
@@ -425,7 +425,7 @@ public class PostsController : ControllerBase
     }
 
     /// <summary>
-    /// Helper method: Current User Roles
+    /// Metodă ajutătoare: Rolurile utilizatorului curent
     /// </summary>
     private List<string> GetCurrentUserRoles()
     {

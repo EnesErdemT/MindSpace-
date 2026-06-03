@@ -9,7 +9,7 @@ export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://localhos
 
 export const formatDate = (date: string | Date) => {
   const dateObj = typeof date === 'string' ? new Date(date) : date
-  return dateObj.toLocaleDateString('tr-TR', {
+  return dateObj.toLocaleDateString('ro-RO', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'

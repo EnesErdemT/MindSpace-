@@ -72,7 +72,7 @@ export default function ProfilePage() {
         setPosts(postsResult.items || []);
       } catch (error: unknown) {
         console.error('Error fetching user posts:', error);
-        setPosts([]); // Hata durumunda boş array
+        setPosts([]); // În caz de eroare, array gol
       } finally {
         setLoading(false);
       }
@@ -216,7 +216,7 @@ export default function ProfilePage() {
                   
                   <div className="flex items-center text-gray-600">
                     <Calendar className="h-5 w-5 mr-3 text-gray-400" />
-                    <span>Înscris: {new Date(user.joinDate).toLocaleDateString('tr-TR')}</span>
+                    <span>Înscris: {new Date(user.joinDate).toLocaleDateString('ro-RO')}</span>
                   </div>
                   
                   {user.website && (
@@ -359,7 +359,7 @@ export default function ProfilePage() {
                         value={editForm.twitterHandle}
                         onChange={(e) => setEditForm(p => ({ ...p, twitterHandle: e.target.value }))}
                         className="h-11 border-gray-200 rounded-xl"
-                        placeholder="@kullaniciadi"
+                        placeholder="@numeutilizator"
                       />
                     </div>
                     <div className="space-y-1">
@@ -469,7 +469,7 @@ export default function ProfilePage() {
                           variant="default" 
                           showActions={true}
                           onEdit={(post) => {
-                            // Düzenleme sayfasına yönlendir
+                            // Redirecționare către pagina de editare
                             window.location.href = `/write?edit=${post.id}`;
                           }}
                           onDelete={(postId) => {

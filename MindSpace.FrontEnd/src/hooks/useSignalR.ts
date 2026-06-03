@@ -22,14 +22,14 @@ export const useSignalR = () => {
 
     const connectToSignalR = async () => {
       try {
-        // SignalR bağlantısı için gerekli import'ları dinamik olarak yükle
+        // Încărcați dinamic importurile necesare pentru conexiunea SignalR
         const { HubConnectionBuilder, LogLevel } = await import('@microsoft/signalr');
         
-        // JWT token'ı al
+        // Obțineți tokenul JWT
         const token = localStorage.getItem('token');
         if (!token) return;
 
-        // Hub bağlantısını oluştur
+        // Conectați-vă la Hub
         const connection = new HubConnectionBuilder()
           .withUrl('https://localhost:7237/notificationHub', {
             accessTokenFactory: () => token
@@ -38,14 +38,14 @@ export const useSignalR = () => {
           .withAutomaticReconnect()
           .build();
 
-        // Bağlantı event'lerini dinle
+        // Ascultați evenimentele de conexiune
         connection.on('NewNotification', (notification) => {
-          console.log('Yeni bildirim alındı:', notification);
+          console.log('Notificare nouă primită:', notification);
           setNotifications(prev => [notification, ...prev]);
         });
 
         connection.on('NotificationRead', (notificationId) => {
-          console.log('Bildirim okundu:', notificationId);
+          console.log('Notificare citită:', notificationId);
           setNotifications(prev => 
             prev.map(n => 
               n.id === notificationId ? { ...n, isRead: true } : n
@@ -54,20 +54,20 @@ export const useSignalR = () => {
         });
 
         connection.on('AllNotificationsRead', () => {
-          console.log('Tüm bildirimler okundu');
+          console.log('Toate notificările au fost marcate ca citite');
           setNotifications(prev => 
             prev.map(n => ({ ...n, isRead: true }))
           );
         });
 
-        // Bağlantıyı başlat
+        // Inițiați conexiunea
         await connection.start();
         setIsConnected(true);
         connectionRef.current = connection;
 
-        console.log('SignalR bağlantısı başarılı');
+        console.log('Conexiunea SignalR a fost realizată cu succes');
       } catch (error) {
-        console.error('SignalR bağlantı hatası:', error);
+        console.error('Eroare de conexiune SignalR:', error);
       }
     };
 
@@ -87,7 +87,7 @@ export const useSignalR = () => {
       try {
         await connectionRef.current.invoke('MarkNotificationAsRead', notificationId);
       } catch (error) {
-        console.error('Bildirim okundu işaretleme hatası:', error);
+        console.error('Eroare la marcarea notificării ca citită:', error);
       }
     }
   };

@@ -24,7 +24,7 @@ export default function ForgotPasswordPage() {
       const result = await authService.forgotPassword(email);
       if (result.success) {
         setSubmitted(true);
-        // Dev modda token döner, kullanıcıya gösterelim
+        // În modul de dezvoltare se returnează tokenul, să îl arătăm utilizatorului
         if (result.resetToken) {
           setResetToken(result.resetToken);
         }

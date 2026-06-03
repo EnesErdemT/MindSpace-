@@ -40,7 +40,7 @@ public class AuthController : ControllerBase
                 return BadRequest(new AuthResponse
                 {
                     Success = false,
-                    Message = "Validasyon hatası",
+                    Message = "Eroare de validare",
                     Errors = errors
                 });
             }
@@ -58,13 +58,13 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Register işleminde hata: {Message}", ex.Message);
+            _logger.LogError(ex, "Eroare la înregistrare: {Message}", ex.Message);
             
             return BadRequest(new AuthResponse
             {
                 Success = false,
-                Message = "Bir hata oluştu",
-                Errors = ["Sunucu hatası"]
+                Message = "A apărut o eroare",
+                Errors = ["Eroare de server"]
             });
         }
     }
@@ -87,7 +87,7 @@ public class AuthController : ControllerBase
                 return BadRequest(new AuthResponse
                 {
                     Success = false,
-                    Message = "Validasyon hatası",
+                    Message = "Eroare de validare",
                     Errors = errors
                 });
             }
@@ -105,13 +105,13 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Login işleminde hata: {Message}", ex.Message);
+            _logger.LogError(ex, "Eroare la autentificare: {Message}", ex.Message);
             
             return BadRequest(new AuthResponse
             {
                 Success = false,
-                Message = "Bir hata oluştu",
-                Errors = ["Sunucu hatası"]
+                Message = "A apărut o eroare",
+                Errors = ["Eroare de server"]
             });
         }
     }
@@ -127,8 +127,8 @@ public class AuthController : ControllerBase
                 return BadRequest(new AuthResponse
                 {
                     Success = false,
-                    Message = "Token ve refresh token gerekli",
-                    Errors = ["Eksik parametreler"]
+                    Message = "Token-ul și token-ul de reîmprospătare sunt necesare",
+                    Errors = ["Parametri lipsă"]
                 });
             }
 
@@ -139,19 +139,19 @@ public class AuthController : ControllerBase
                 return BadRequest(result);
             }
 
-            _logger.LogInformation("Token yenilendi");
+            _logger.LogInformation("Token reînnoit");
             
             return Ok(result);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Token yenileme işleminde hata: {Message}", ex.Message);
+            _logger.LogError(ex, "Eroare la reînnoirea token-ului: {Message}", ex.Message);
             
             return BadRequest(new AuthResponse
             {
                 Success = false,
-                Message = "Bir hata oluştu",
-                Errors = ["Sunucu hatası"]
+                Message = "A apărut o eroare",
+                Errors = ["Eroare de server"]
             });
         }
     }
@@ -176,8 +176,8 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Logout işleminde hata");
-            return BadRequest(new { success = false, message = "Bir hata oluştu" });
+            _logger.LogError(ex, "Eroare la deconectare");
+            return BadRequest(new { success = false, message = "A apărut o eroare" });
         }
     }
 
@@ -190,7 +190,7 @@ public class AuthController : ControllerBase
         try
         {
             if (string.IsNullOrWhiteSpace(request.Email))
-                return BadRequest(new { Message = "Email adresi zorunludur" });
+                return BadRequest(new { Message = "Adresa de email este obligatorie" });
 
             var result = await _authService.ForgotPasswordAsync(request.Email);
 
@@ -203,8 +203,8 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "ForgotPassword işleminde hata");
-            return StatusCode(500, new { Message = "Bir hata oluştu" });
+            _logger.LogError(ex, "Eroare la ForgotPassword");
+            return StatusCode(500, new { Message = "A apărut o eroare" });
         }
     }
 
@@ -223,13 +223,13 @@ public class AuthController : ControllerBase
             if (!result.Success)
                 return BadRequest(result);
 
-            _logger.LogInformation("Şifre sıfırlandı: {Email}", request.Email);
+            _logger.LogInformation("Parola a fost resetată: {Email}", request.Email);
             return Ok(result);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "ResetPassword işleminde hata");
-            return StatusCode(500, new { Message = "Bir hata oluştu" });
+            _logger.LogError(ex, "Eroare la ResetPassword");
+            return StatusCode(500, new { Message = "A apărut o eroare" });
         }
     }
 
@@ -239,26 +239,26 @@ public class AuthController : ControllerBase
         try
         {
             if (string.IsNullOrWhiteSpace(token))
-                return Content(BuildVerificationHtml(false, "Geçersiz doğrulama bağlantısı."), "text/html");
+                return Content(BuildVerificationHtml(false, "Link de verificare invalid."), "text/html");
 
             var result = await _authService.VerifyEmailAsync(token);
 
-            return Content(BuildVerificationHtml(result.Success, result.Message ?? "Bir hata oluştu."), "text/html");
+            return Content(BuildVerificationHtml(result.Success, result.Message ?? "A apărut o eroare."), "text/html");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "VerifyEmail işleminde hata");
-            return Content(BuildVerificationHtml(false, "Bir hata oluştu, lütfen tekrar deneyin."), "text/html");
+            _logger.LogError(ex, "Eroare la VerifyEmail");
+            return Content(BuildVerificationHtml(false, "A apărut o eroare, vă rugăm să încercați din nou."), "text/html");
         }
     }
 
     private static string BuildVerificationHtml(bool success, string message) => $$"""
         <!DOCTYPE html>
-        <html lang="tr">
+        <html lang="ro">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Email Doğrulama — MindSpace</title>
+            <title>Verificare Email — MindSpace</title>
             <style>
                 * { margin: 0; padding: 0; box-sizing: border-box; }
                 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
@@ -273,9 +273,9 @@ public class AuthController : ControllerBase
         <body>
             <div class="card">
                 <div class="icon">{{(success ? "✅" : "❌")}}</div>
-                <h1>{{(success ? "Email Doğrulandı!" : "Doğrulama Başarısız")}}</h1>
+                <h1>{{(success ? "Email Verificat!" : "Verificarea a eșuat")}}</h1>
                 <p>{{message}}</p>
-                <a href="http://localhost:3000">{{(success ? "Giriş Yap" : "Ana Sayfaya Dön")}}</a>
+                <a href="http://localhost:3000">{{(success ? "Autentifică-te" : "Înapoi la pagina principală")}}</a>
             </div>
         </body>
         </html>
@@ -289,15 +289,15 @@ public class AuthController : ControllerBase
         try
         {
             if (string.IsNullOrWhiteSpace(request.Email))
-                return BadRequest(new { Message = "Email adresi zorunludur" });
+                return BadRequest(new { Message = "Adresa de email este obligatorie" });
 
             var result = await _authService.ResendVerificationEmailAsync(request.Email);
             return Ok(result);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "ResendVerification işleminde hata");
-            return StatusCode(500, new { Message = "Bir hata oluştu" });
+            _logger.LogError(ex, "Eroare la ResendVerification");
+            return StatusCode(500, new { Message = "A apărut o eroare" });
         }
     }
 
@@ -326,8 +326,8 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetCurrentUser işleminde hata: {Message}", ex.Message);
-            return BadRequest(new { success = false, message = "Bir hata oluştu" });
+            _logger.LogError(ex, "Eroare la GetCurrentUser: {Message}", ex.Message);
+            return BadRequest(new { success = false, message = "A apărut o eroare" });
         }
     }
 }

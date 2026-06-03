@@ -22,14 +22,14 @@ public class PostService : IPostService
         // Creează slug
         var slug = GenerateSlug(request.Title);
         
-        // Slug unique mi kontrol et
+        // Verifică dacă slug-ul este unic
         var existingPost = await _unitOfWork.Posts.GetBySlugAsync(slug);
         if (existingPost != null)
         {
             slug = $"{slug}-{DateTime.UtcNow.Ticks}";
         }
 
-        // Reading time hesapla (ortalama 200 kelime/dakika)
+        // Calculează timpul de citire (în medie 200 cuvinte/minut)
         var readTimeMinutes = CalculateReadTime(request.Content);
 
         var post = new Post
@@ -111,7 +111,7 @@ public class PostService : IPostService
     {
         var post = await _unitOfWork.Posts.GetByIdAsync(postId);
         if (post == null)
-            throw new KeyNotFoundException("Post bulunamadı");
+            throw new KeyNotFoundException("Postarea nu a fost găsită");
 
         _unitOfWork.Posts.Remove(post);
         await _unitOfWork.SaveChangesAsync();
@@ -260,7 +260,7 @@ public class PostService : IPostService
     {
         var post = await _unitOfWork.Posts.GetByIdAsync(postId);
         if (post == null)
-            throw new KeyNotFoundException("Post bulunamadı");
+            throw new KeyNotFoundException("Postarea nu a fost găsită");
 
         post.Status = PostStatus.Published;
         post.PublishedAt = DateTime.UtcNow;
@@ -275,7 +275,7 @@ public class PostService : IPostService
     {
         var post = await _unitOfWork.Posts.GetByIdAsync(postId);
         if (post == null)
-            throw new KeyNotFoundException("Post bulunamadı");
+            throw new KeyNotFoundException("Postarea nu a fost găsită");
 
         post.Status = PostStatus.Draft;
         post.PublishedAt = null;
@@ -308,7 +308,7 @@ public class PostService : IPostService
         if (string.IsNullOrWhiteSpace(content))
             return string.Empty;
 
-        // HTML tag'lerini temizle (basit)
+        // Șterge etichetele HTML (simplu)
         string plainText = Regex.Replace(content, "<.*?>", "");
         
         if (plainText.Length <= maxLength)
@@ -322,29 +322,29 @@ public class PostService : IPostService
         if (string.IsNullOrWhiteSpace(content))
             return 1;
 
-        // HTML tag'lerini temizle
+        // Șterge etichetele HTML
         string plainText = Regex.Replace(content, "<.*?>", "");
         
         // Calculează numărul de cuvinte
         int wordCount = plainText.Split(new[] { ' ', '\t', '\n', '\r' }, 
             StringSplitOptions.RemoveEmptyEntries).Length;
         
-        // Ortalama 200 kelime/dakika
+        // În medie 200 cuvinte/minut
         int readTime = (int)Math.Ceiling(wordCount / 200.0);
         
-        return Math.Max(readTime, 1); // En az 1 dakika
+        return Math.Max(readTime, 1); // Cel puțin 1 minut
     }
 
     private async Task ProcessPostTagsAsync(Guid postId, List<string> tagNames)
     {
-        // Mevcut tag'leri sil
+        // Șterge etichetele existente
         var existingPostTags = await _unitOfWork.PostTags.FindAsync(pt => pt.PostId == postId);
         foreach (var postTag in existingPostTags)
         {
             _unitOfWork.PostTags.Remove(postTag);
         }
 
-        // Yeni tag'leri ekle
+        // Adaugă etichete noi
         foreach (var tagName in tagNames.Where(t => !string.IsNullOrWhiteSpace(t)))
         {
             var slug = GenerateSlug(tagName);
@@ -366,12 +366,12 @@ public class PostService : IPostService
             }
             else
             {
-                // Var olan tag'in post count'unu artır
+                // Crește numărul de articole pentru eticheta existentă
                 existingTag.PostCount++;
                 _unitOfWork.Tags.Update(existingTag);
             }
 
-            // PostTag ilişkisi oluştur
+            // Creează relația PostTag
             var postTag = new PostTag
             {
                 PostId = postId,
@@ -383,17 +383,17 @@ public class PostService : IPostService
 
     private async Task<PostResponse> MapToPostResponseAsync(Post post)
     {
-        // Author bilgisini al
+        // Obține informațiile despre autor
         var author = await _unitOfWork.Users.GetByIdAsync(post.AuthorId);
         
-        // Category bilgisini al
+        // Obține informațiile despre categorie
         Category? category = null;
         if (post.CategoryId.HasValue)
         {
             category = await _unitOfWork.Categories.GetByIdAsync(post.CategoryId.Value);
         }
 
-        // Tag'leri al
+        // Obține etichetele
         var postTags = await _unitOfWork.PostTags.FindAsync(pt => pt.PostId == post.Id);
         var tags = new List<TagResponse>();
         

@@ -51,7 +51,7 @@ export default function AuthorProfilePage() {
       const foundAuthor = authorsResponse.users.find(a => a.userName === username);
       
       if (!foundAuthor) {
-        throw new Error('Yazar bulunamadı');
+        throw new Error('Autorul nu a fost găsit');
       }
       
       setAuthor(foundAuthor);
@@ -62,7 +62,7 @@ export default function AuthorProfilePage() {
         setUserProfile(profile);
         setIsFollowing(profile.isFollowing);
       } catch (error) {
-        console.error('Kullanıcı profili yüklenirken hata:', error);
+        console.error('Eroare la încărcarea profilului utilizatorului:', error);
       }
       
       // Bu yazarın yazılarını getir (şimdilik tüm yazılardan filtrele)
@@ -74,7 +74,7 @@ export default function AuthorProfilePage() {
       setPosts(authorPosts);
       
     } catch (error) {
-      console.error('Yazar profili yüklenirken hata:', error);
+      console.error('Eroare la încărcarea profilului autorului:', error);
     } finally {
       setLoading(false);
     }
@@ -113,7 +113,7 @@ export default function AuthorProfilePage() {
       // Kullanıcının kendi profil bilgilerini güncelle (following count için)
       await refreshUser();
     } catch (error) {
-      console.error('Takip işlemi sırasında hata:', error);
+      console.error('Eroare în timpul procesului de urmărire:', error);
     }
   };
 
@@ -145,11 +145,11 @@ export default function AuthorProfilePage() {
           <div className="text-center py-12">
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
               <User className="mx-auto h-16 w-16 text-gray-400 mb-4" />
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Yazar Bulunamadı</h2>
-              <p className="text-gray-600 mb-6">Aradığınız yazar bulunamadı veya profil mevcut değil.</p>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Autorul nu a fost găsit</h2>
+              <p className="text-gray-600 mb-6">Autorul căutat nu a fost găsit sau profilul nu există.</p>
               <Link href="/writers">
                 <Button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 rounded-full">
-                  Yazarlara Dön
+                  Înapoi la Autori
                 </Button>
               </Link>
             </div>
@@ -162,10 +162,10 @@ export default function AuthorProfilePage() {
   const isOwnProfile = currentUser?.userName === username;
 
   const stats = [
-    { label: 'Yazılar', value: userProfile?.recentPosts?.length ?? 0, icon: BookOpen, color: 'text-blue-600' },
-    { label: 'Takipçi', value: author.followerCount, icon: Users, color: 'text-green-600' },
-    { label: 'Takip', value: author.followingCount, icon: Heart, color: 'text-red-600' },
-    { label: 'Yorumlar', value: 0, icon: Eye, color: 'text-purple-600' }
+    { label: 'Articole', value: userProfile?.recentPosts?.length ?? 0, icon: BookOpen, color: 'text-blue-600' },
+    { label: 'Urmăritori', value: author.followerCount, icon: Users, color: 'text-green-600' },
+    { label: 'Urmărește', value: author.followingCount, icon: Heart, color: 'text-red-600' },
+    { label: 'Comentarii', value: 0, icon: Eye, color: 'text-purple-600' }
   ];
 
   return (
@@ -176,7 +176,7 @@ export default function AuthorProfilePage() {
           <Link href="/writers">
             <Button variant="outline" className="flex items-center gap-2 border-gray-300 hover:border-blue-500">
               <ArrowLeft className="h-4 w-4" />
-              Yazarlara Dön
+              Înapoi la Autori
             </Button>
           </Link>
         </div>
@@ -214,27 +214,27 @@ export default function AuthorProfilePage() {
                   </div>
 
                                      {/* Action Buttons */}
-                   <div className="flex gap-3">
-                     {!isOwnProfile && currentUser?.userName !== username && (
-                       <Button 
-                         onClick={handleFollow}
-                         className={`${
-                           isFollowing 
-                             ? 'bg-gray-600 hover:bg-gray-700' 
-                             : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
-                         } text-white rounded-full`}
-                       >
-                         {isFollowing ? 'Takibi Bırak' : 'Takip Et'}
-                       </Button>
-                     )}
-                     {isOwnProfile && (
-                       <Link href="/profile">
-                         <Button variant="outline" className="border-gray-300 hover:border-blue-500 rounded-full">
-                           Profilimi Düzenle
-                         </Button>
-                       </Link>
-                     )}
-                   </div>
+                    <div className="flex gap-3">
+                      {!isOwnProfile && currentUser?.userName !== username && (
+                        <Button 
+                          onClick={handleFollow}
+                          className={`${
+                            isFollowing 
+                              ? 'bg-gray-600 hover:bg-gray-700' 
+                              : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
+                          } text-white rounded-full`}
+                        >
+                          {isFollowing ? 'Nu mai urmări' : 'Urmărește'}
+                        </Button>
+                      )}
+                      {isOwnProfile && (
+                        <Link href="/profile">
+                          <Button variant="outline" className="border-gray-300 hover:border-blue-500 rounded-full">
+                            Editează Profilul
+                          </Button>
+                        </Link>
+                      )}
+                    </div>
                 </div>
 
                 {/* Stats */}
@@ -258,9 +258,9 @@ export default function AuthorProfilePage() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-900">
-              {author.firstName} {author.lastName}&apos;in Yazıları
+              Articolele lui {author.firstName} {author.lastName}
             </h2>
-            <span className="text-gray-600">{posts.length} yazı</span>
+            <span className="text-gray-600">{posts.length} articole</span>
           </div>
 
                      {posts.length > 0 ? (
@@ -272,11 +272,11 @@ export default function AuthorProfilePage() {
                    variant="featured" 
                    showActions={isOwnProfile}
                    onEdit={(post) => {
-                     // Düzenleme sayfasına yönlendir
+                     // Redirecționare către pagina de editare
                      window.location.href = `/write?edit=${post.id}`;
                    }}
                    onDelete={(postId) => {
-                     // Post'u listeden kaldır
+                     // Elimină postarea din listă
                      setPosts(posts.filter(p => p.id !== postId));
                    }}
                  />
@@ -287,10 +287,10 @@ export default function AuthorProfilePage() {
               <CardContent className="p-12 text-center">
                 <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  Henüz yazı yok
+                  Nu există articole încă
                 </h3>
                 <p className="text-gray-600">
-                  {author.firstName} henüz yazı paylaşmamış.
+                  {author.firstName} nu a publicat niciun articol încă.
                 </p>
               </CardContent>
             </Card>

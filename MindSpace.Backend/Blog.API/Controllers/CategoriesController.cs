@@ -1,4 +1,4 @@
-﻿using Blog.Application.Common.Interfaces;
+using Blog.Application.Common.Interfaces;
 using Blog.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -42,8 +42,8 @@ public class CategoriesController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Kategoriler getirilirken hata oluştu");
-            return StatusCode(500, new { Error = "Kategoriler getirilirken hata oluştu" });
+            _logger.LogError(ex, "Error getting categories");
+            return StatusCode(500, new { Error = "Eroare la preluarea categoriilor" });
         }
     }
 
@@ -73,8 +73,8 @@ public class CategoriesController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Kategori getirilirken hata oluştu - CategoryId: {CategoryId}", id);
-            return StatusCode(500, new { Error = "Kategori getirilirken hata oluştu" });
+            _logger.LogError(ex, "Error getting category - CategoryId: {CategoryId}", id);
+            return StatusCode(500, new { Error = "Eroare la preluarea categoriei" });
         }
     }
     [HttpGet("slug/{slug}")]
@@ -98,8 +98,8 @@ public class CategoriesController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Kategori getirilirken hata oluştu - Slug: {Slug}", slug);
-            return StatusCode(500, new { Error = "Kategori getirilirken hata oluştu" });
+            _logger.LogError(ex, "Error getting category - Slug: {Slug}", slug);
+            return StatusCode(500, new { Error = "Eroare la preluarea categoriei" });
         }
     }
 
@@ -116,7 +116,7 @@ public class CategoriesController : ControllerBase
 
             var slug = request.Name.ToLowerInvariant().Replace(" ", "-");
             var existing = await _unitOfWork.Categories.GetQueryable().AnyAsync(c => c.Slug == slug);
-            if (existing) return BadRequest(new { Error = "Bu isimde bir kategori zaten var" });
+            if (existing) return BadRequest(new { Error = "O categorie cu acest nume există deja" });
 
             var category = new Category
             {
@@ -129,14 +129,14 @@ public class CategoriesController : ControllerBase
             await _unitOfWork.Categories.AddAsync(category);
             await _unitOfWork.SaveChangesAsync();
 
-            _logger.LogInformation("Kategori oluşturuldu: {Name}", category.Name);
+            _logger.LogInformation("Category created: {Name}", category.Name);
             return CreatedAtAction(nameof(GetCategoryById), new { id = category.Id },
                 new { category.Id, category.Name, category.Description, category.Slug });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Kategori oluşturulurken hata oluştu");
-            return StatusCode(500, new { Error = "Kategori oluşturulurken hata oluştu" });
+            _logger.LogError(ex, "Error creating category");
+            return StatusCode(500, new { Error = "Eroare la crearea categoriei" });
         }
     }
 
@@ -163,13 +163,13 @@ public class CategoriesController : ControllerBase
             _unitOfWork.Categories.Update(category);
             await _unitOfWork.SaveChangesAsync();
 
-            _logger.LogInformation("Kategori güncellendi: {Id}", id);
+            _logger.LogInformation("Category updated: {Id}", id);
             return Ok(new { category.Id, category.Name, category.Description, category.Slug });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Kategori güncellenirken hata oluştu - CategoryId: {Id}", id);
-            return StatusCode(500, new { Error = "Kategori güncellenirken hata oluştu" });
+            _logger.LogError(ex, "Error updating category - CategoryId: {Id}", id);
+            return StatusCode(500, new { Error = "Eroare la actualizarea categoriei" });
         }
     }
 
@@ -188,13 +188,13 @@ public class CategoriesController : ControllerBase
             _unitOfWork.Categories.Remove(category);
             await _unitOfWork.SaveChangesAsync();
 
-            _logger.LogInformation("Kategori silindi: {Id}", id);
-            return Ok(new { Message = "Kategori silindi" });
+            _logger.LogInformation("Category deleted: {Id}", id);
+            return Ok(new { Message = "Categoria a fost ștearsă" });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Kategori silinirken hata oluştu - CategoryId: {Id}", id);
-            return StatusCode(500, new { Error = "Kategori silinirken hata oluştu" });
+            _logger.LogError(ex, "Error deleting category - CategoryId: {Id}", id);
+            return StatusCode(500, new { Error = "Eroare la ștergerea categoriei" });
         }
     }
 }

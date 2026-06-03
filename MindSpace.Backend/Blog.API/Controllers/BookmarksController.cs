@@ -1,4 +1,4 @@
-﻿using Blog.Application.Common.Interfaces;
+using Blog.Application.Common.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -94,7 +94,7 @@ public class BookmarksController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting bookmarks for user");
-            return StatusCode(500, new { Message = "Kaydedilen yazılar alınırken hata oluştu" });
+            return StatusCode(500, new { Message = "A apărut o eroare la preluarea articolelor salvate" });
         }
     }
 
@@ -112,7 +112,7 @@ public class BookmarksController : ControllerBase
 
             var post = await _unitOfWork.Posts.GetByIdAsync(postId);
             if (post == null)
-                return NotFound("Post bulunamadı");
+                return NotFound("Articolul nu a fost găsit");
 
             var existingBookmark = await _unitOfWork.Bookmarks
                 .FindAsync(b => b.UserId == userId && b.PostId == postId);
@@ -126,7 +126,7 @@ public class BookmarksController : ControllerBase
 
                 _logger.LogInformation("Bookmark removed for user {UserId} and post {PostId}", userId, postId);
 
-                return Ok(new { IsBookmarked = false, Message = "Yazı kaydedilenlerden çıkarıldı" });
+                return Ok(new { IsBookmarked = false, Message = "Articolul a fost eliminat din marcaje" });
             }
             else
             {
@@ -142,13 +142,13 @@ public class BookmarksController : ControllerBase
 
                 _logger.LogInformation("Bookmark added for user {UserId} and post {PostId}", userId, postId);
 
-                return Ok(new { IsBookmarked = true, Message = "Yazı kaydedildi" });
+                return Ok(new { IsBookmarked = true, Message = "Articolul a fost salvat în marcaje" });
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error toggling bookmark for post {PostId}", postId);
-            return StatusCode(500, new { Message = "Bookmark işlemi sırasında hata oluştu" });
+            return StatusCode(500, new { Message = "A apărut o eroare în timpul procesului de adăugare/eliminare marcaj" });
         }
     }
 
@@ -173,7 +173,7 @@ public class BookmarksController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting bookmark status for post {PostId}", postId);
-            return StatusCode(500, new { Message = "Bookmark durumu alınırken hata oluştu" });
+            return StatusCode(500, new { Message = "A apărut o eroare la verificarea stării marcajului" });
         }
     }
 

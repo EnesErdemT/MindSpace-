@@ -99,7 +99,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
         tagIds: postData.tags?.map(tag => tag.id) || []
       });
     } catch (error) {
-      console.error('Post yüklenirken hata:', error);
+      console.error('Eroare la încărcarea articolului:', error);
       router.push('/');
     } finally {
       setLoading(false);
@@ -111,7 +111,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
       const response = await categoriesService.getCategories();
       setCategories(response || []);
     } catch (error) {
-      console.error('Kategoriler yüklenirken hata:', error);
+      console.error('Eroare la încărcarea categoriilor:', error);
     }
   };
 
@@ -120,7 +120,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
       const response = await tagsService.getTags();
       setTags(response || []);
     } catch (error) {
-      console.error('Etiketler yüklenirken hata:', error);
+      console.error('Eroare la încărcarea etichetelor:', error);
     }
   };
 
@@ -144,7 +144,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
 
       router.push(`/post/${post.slug}`);
     } catch (error) {
-      console.error('Post güncellenirken hata:', error);
+      console.error('Eroare la actualizarea articolului:', error);
     } finally {
       setSaving(false);
     }
@@ -164,7 +164,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="flex items-center gap-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Kimlik doğrulanıyor...</span>
+          <span>Se verifică autentificarea...</span>
         </div>
       </div>
     );
@@ -179,7 +179,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="flex items-center gap-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Yükleniyor...</span>
+          <span>Se încarcă...</span>
         </div>
       </div>
     );
@@ -189,11 +189,11 @@ export default function EditPostPage({ params }: EditPostPageProps) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Post bulunamadı</h1>
-          <p className="text-gray-600 mb-4">Aradığınız post mevcut değil veya erişim izniniz yok.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Articolul nu a fost găsit</h1>
+          <p className="text-gray-600 mb-4">Articolul căutat nu există sau nu aveți permisiunea de a-l accesa.</p>
           <Button onClick={() => router.push('/')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Ana Sayfaya Dön
+            Înapoi la pagina principală
           </Button>
         </div>
       </div>
@@ -211,22 +211,22 @@ export default function EditPostPage({ params }: EditPostPageProps) {
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Geri Dön
+            Înapoi
           </Button>
-          <h1 className="text-3xl font-bold text-gray-900">Post Düzenle</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Editează Articolul</h1>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Title */}
           <Card>
             <CardHeader>
-              <CardTitle>Başlık</CardTitle>
+              <CardTitle>Titlu</CardTitle>
             </CardHeader>
             <CardContent>
               <Input
                 value={formData.title}
                 onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                placeholder="Post başlığını girin..."
+                placeholder="Introduceți titlul articolului..."
                 required
                 className="text-lg"
               />
@@ -236,13 +236,13 @@ export default function EditPostPage({ params }: EditPostPageProps) {
           {/* Content */}
           <Card>
             <CardHeader>
-              <CardTitle>İçerik</CardTitle>
+              <CardTitle>Conținut</CardTitle>
             </CardHeader>
             <CardContent>
               <textarea
                 value={formData.content}
                 onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-                placeholder="Post içeriğini yazın..."
+                placeholder="Scrieți conținutul articolului..."
                 required
                 rows={15}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
@@ -253,13 +253,13 @@ export default function EditPostPage({ params }: EditPostPageProps) {
           {/* Excerpt */}
           <Card>
             <CardHeader>
-              <CardTitle>Özet</CardTitle>
+              <CardTitle>Rezumat</CardTitle>
             </CardHeader>
             <CardContent>
               <textarea
                 value={formData.excerpt}
                 onChange={(e) => setFormData(prev => ({ ...prev, excerpt: e.target.value }))}
-                placeholder="Post özetini yazın..."
+                placeholder="Scrieți rezumatul articolului..."
                 rows={3}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
               />
@@ -269,7 +269,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
           {/* Featured Image */}
           <Card>
             <CardHeader>
-              <CardTitle>Öne Çıkan Resim URL</CardTitle>
+              <CardTitle>URL Imagine Reprezentativă</CardTitle>
             </CardHeader>
             <CardContent>
               <Input
@@ -284,7 +284,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
           {/* Category */}
           <Card>
             <CardHeader>
-              <CardTitle>Kategori</CardTitle>
+              <CardTitle>Categorie</CardTitle>
             </CardHeader>
             <CardContent>
               <select
@@ -292,7 +292,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
                 onChange={(e) => setFormData(prev => ({ ...prev, categoryId: e.target.value }))}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
-                <option value="">Kategori seçin...</option>
+                <option value="">Selectați categoria...</option>
                 {categories.map(category => (
                   <option key={category.id} value={category.id}>
                     {category.name}
@@ -305,7 +305,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
           {/* Tags */}
           <Card>
             <CardHeader>
-              <CardTitle>Etiketler</CardTitle>
+              <CardTitle>Etichete</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
@@ -331,18 +331,18 @@ export default function EditPostPage({ params }: EditPostPageProps) {
               variant="outline"
               onClick={() => router.push(`/post/${post.slug}`)}
             >
-              İptal
+              Anulează
             </Button>
             <Button type="submit" disabled={saving}>
               {saving ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Kaydediliyor...
+                  Se salvează...
                 </>
               ) : (
                 <>
                   <Save className="h-4 w-4 mr-2" />
-                  Kaydet
+                  Salvează
                 </>
               )}
             </Button>

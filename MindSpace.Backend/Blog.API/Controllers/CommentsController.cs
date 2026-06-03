@@ -1,4 +1,4 @@
-﻿using Blog.Application.Common.Interfaces;
+using Blog.Application.Common.Interfaces;
 using Blog.Application.Features.Notifications.Interfaces;
 using Blog.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -35,7 +35,7 @@ public class CommentsController : ControllerBase
         {
             var post = await _unitOfWork.Posts.GetByIdAsync(postId);
             if (post == null)
-                return NotFound("Post bulunamadı");
+                return NotFound("Articolul nu a fost găsit");
 
             var comments = await _unitOfWork.Comments.FindAsync(c => c.PostId == postId);
             var rootComments = comments.Where(c => c.ParentCommentId == null).ToList();
@@ -114,7 +114,7 @@ public class CommentsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting comments for post {PostId}", postId);
-            return StatusCode(500, new { Error = "Yorumlar getirilirken hata oluştu" });
+            return StatusCode(500, new { Error = "A apărut o eroare la preluarea comentariilor" });
         }
     }
 
@@ -137,7 +137,7 @@ public class CommentsController : ControllerBase
 
             var post = await _unitOfWork.Posts.GetByIdAsync(request.PostId);
             if (post == null)
-                return NotFound("Post bulunamadı");
+                return NotFound("Articolul nu a fost găsit");
 
             // Parent comment kontrolü
             if (request.ParentCommentId.HasValue)
@@ -191,7 +191,7 @@ public class CommentsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating comment");
-            return StatusCode(500, new { Error = "Yorum oluşturulurken hata oluştu" });
+            return StatusCode(500, new { Error = "A apărut o eroare la crearea comentariului" });
         }
     }
 
@@ -218,7 +218,7 @@ public class CommentsController : ControllerBase
                 return NotFound("Comentariu negăsit");
 
             if (comment.AuthorId != userId)
-                return Forbid("Sadece yorum sahibi bu işlemi yapabilir");
+                return Forbid("Doar autorul comentariului poate efectua această acțiune");
 
             comment.Content = request.Content;
             comment.UpdatedAt = DateTime.UtcNow;
@@ -228,7 +228,7 @@ public class CommentsController : ControllerBase
 
             _logger.LogInformation("Comment updated: {CommentId} by {UserId}", id, userId);
 
-            return Ok(new { Message = "Yorum güncellendi" });
+            return Ok(new { Message = "Comentariul a fost actualizat" });
         }
         catch (Exception ex)
         {
@@ -256,7 +256,7 @@ public class CommentsController : ControllerBase
                 return NotFound("Comentariu negăsit");
 
             if (comment.AuthorId != userId)
-                return Forbid("Sadece yorum sahibi bu işlemi yapabilir");
+                return Forbid("Doar autorul comentariului poate efectua această acțiune");
 
             _unitOfWork.Comments.Remove(comment);
             await _unitOfWork.SaveChangesAsync();
@@ -271,7 +271,7 @@ public class CommentsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error deleting comment {CommentId}", id);
-            return StatusCode(500, new { Error = "Yorum silinirken hata oluştu" });
+            return StatusCode(500, new { Error = "A apărut o eroare la ștergerea comentariului" });
         }
     }
 
@@ -310,7 +310,7 @@ public class CommentsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting comment {CommentId}", id);
-            return StatusCode(500, new { Error = "Yorum getirilirken hata oluştu" });
+            return StatusCode(500, new { Error = "A apărut o eroare la preluarea comentariului" });
         }
     }
 
